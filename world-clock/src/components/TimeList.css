@@ -1,0 +1,10 @@
+.time-list {
+  width: 700px;
+  margin: 0 auto;
+  margin-top: 28px;
+  display: none;
+}
+
+.time-list td {
+  text-align: center;
+}

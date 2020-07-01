@@ -1,0 +1,25 @@
+.searchBox {
+  text-align: center;
+}
+
+#search {
+  width: 700px;
+  line-height: 40px;
+  font-size: 16px;
+  padding: 0 8px;
+}
+
+.auto-complete {
+  width: 720px;
+  margin: 0 auto;
+  padding: 0;
+  display: none;
+}
+
+.auto-complete li {
+  list-style: none;
+  padding: 16px;
+  border-style: solid;
+  border-width: 0px 1px 1px 1px;
+  border-color: #ccc;
+}

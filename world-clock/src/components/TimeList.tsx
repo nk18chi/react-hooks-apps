@@ -1,36 +1,28 @@
 import React, { FC } from "react";
 import "./TimeList.css";
+import { TTimeList } from "../model/timeList.model";
+import Time from "./Time";
 
-const TimeList: FC = () => {
+const TimeList: FC<TTimeList> = ({ timelist, dispatch }) => {
   return (
-    <table className='time-list'>
-      <thead>
-        <tr>
-          <th>City, Country</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Vancouver, Canada</td>
-          <td>2020/03/20</td>
-          <td>10:00:00</td>
-          <td>
-            <p className='link'>remove</p>
-          </td>
-        </tr>
-        <tr>
-          <td>Vancouver, Canada</td>
-          <td>2020/03/20</td>
-          <td>10:00:00</td>
-          <td>
-            <p className='link'>remove</p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <>
+      {timelist.length > 0 && (
+        <table className='time-list' data-testid="time-list">
+          <thead>
+            <tr>
+              <th>City, Country</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {timelist.map(({ name, timestamp }, index) => (
+              <Time key={index} index={index} name={name} timestamp={timestamp} dispatch={dispatch} />
+            ))}
+          </tbody>
+        </table>
+      )}
+    </>
   );
 };
 

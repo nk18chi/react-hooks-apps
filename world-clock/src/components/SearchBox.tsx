@@ -1,41 +1,33 @@
 import React, { FC, useState, useEffect } from "react";
 import "./SearchBox.css";
 import { TArea, TSeachBox } from "../model/timeList.model";
-
-const initialMap: { [key: string]: TArea[] } = {
-  vancouver: [{ name: "Vancouver, Canada", timestamp: 1593622219 }],
-  toronto: [{ name: "Toronto, Canada", timestamp: 1593633019 }],
-  canada: [
-    { name: "Vancouver, Canada", timestamp: 1593622219 },
-    { name: "Toronto, Canada", timestamp: 1593633019 },
-  ],
-  tokyo: [{ name: "Tokyo, Japan", timestamp: 1593679819 }],
-  japan: [{ name: "Tokyo, Japan", timestamp: 1593679819 }],
-};
-
-const areaList: string[] = Object.keys(initialMap);
+import { getList } from "../api/timezonedb";
+import { formatAreaData } from "../utils/formatAreaData";
+import { getMatchWords } from "../utils/getMatchWords";
 
 const SearchBox: FC<TSeachBox> = ({ diff, dispatch }) => {
   const [searchWord, setSearchWord] = useState("");
   const [autocompleteList, setAutocompleteList] = useState<TArea[]>([]);
   const [showAutoComplete, setShowAutoComplete] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [zonesMap, setZonesMap] = useState<Map<string, TArea[]>>();
 
+  // fetch data from api only once time
   useEffect(() => {
-    setShowAutoComplete(true);
-    const matches: string[] = areaList.filter((area) => area.includes(searchWord));
-    let seen: Set<string> = new Set();
-    const newList: TArea[] = [];
-    for (const match of matches) {
-      for (const { name, timestamp } of initialMap[match]) {
-        if (seen.has(name)) {
-          continue;
-        }
-        newList.push({ name, timestamp });
-        seen.add(name);
-      }
+    getList().then((res) => {
+      setZonesMap(formatAreaData(res));
+    });
+  }, []);
+
+  // change autocomplete list by keyword
+  useEffect(() => {
+    if (!zonesMap) {
+      return;
     }
-    setAutocompleteList(newList);
-  }, [searchWord]);
+    setLoading(false);
+    setShowAutoComplete(true);
+    setAutocompleteList(getMatchWords(zonesMap, searchWord));
+  }, [searchWord, zonesMap]);
 
   return (
     <>
@@ -50,8 +42,10 @@ const SearchBox: FC<TSeachBox> = ({ diff, dispatch }) => {
         />
       </div>
       {searchWord.length > 0 && (
-        <ul className='auto-complete' data-testid='auto-complete' style={{ display: showAutoComplete ? "block" : "none" }}>
-          {autocompleteList.length ? (
+        <ul className='auto-complete' data-testid='auto-complete' style={{ display: showAutoComplete || loading ? "block" : "none" }}>
+          {loading ? (
+            <li className='not-found'>Loading...</li>
+          ) : autocompleteList.length ? (
             <>
               {autocompleteList.map(({ name, timestamp }, index: number) => (
                 <li

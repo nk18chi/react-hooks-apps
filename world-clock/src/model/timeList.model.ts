@@ -39,3 +39,11 @@ export type TSeachBox = {
   diff: number;
   dispatch: Dispatch<TAction>;
 };
+
+export type TZones = {
+  countryCode: string;
+  countryName: string;
+  zoneName: string;
+  gmtOffset: number;
+  timestamp: number;
+};
